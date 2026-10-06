@@ -5,150 +5,125 @@
     <meta charset="UTF-8">
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     >
 
-    <title>Hamza Web Hub</title>
+    <title>YouTube Player</title>
 
     <style>
         * {
             box-sizing: border-box;
         }
 
+        html,
         body {
             margin: 0;
-            min-height: 100vh;
-            background: #0b0b0d;
-            color: white;
-            font-family: Arial, Helvetica, sans-serif;
-        }
-
-        header {
-            padding: 22px;
-            text-align: center;
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 26px;
-        }
-
-        header p {
-            margin: 7px 0 0;
-            color: #888;
-            font-size: 14px;
-        }
-
-        .apps {
-            width: min(700px, calc(100% - 30px));
-            margin: 10px auto 30px;
-
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-
-        .app {
-            border: 1px solid #242428;
-            background: #151519;
-            color: white;
-
-            border-radius: 14px;
-            padding: 18px;
-
-            cursor: pointer;
-            text-align: left;
-
-            transition:
-                transform 0.15s ease,
-                background 0.15s ease,
-                border-color 0.15s ease;
-        }
-
-        .app:hover {
-            transform: translateY(-2px);
-            background: #1b1b20;
-            border-color: #3a3a42;
-        }
-
-        .app-title {
-            font-size: 17px;
-            font-weight: 700;
-        }
-
-        .app-description {
-            margin-top: 6px;
-            color: #888;
-            font-size: 13px;
-        }
-
-        .viewer {
-            width: min(1100px, calc(100% - 30px));
-            height: 650px;
-            margin: 0 auto 30px;
-
-            display: none;
-            position: relative;
-
+            width: 100%;
+            height: 100%;
             background: #000;
-            border: 1px solid #242428;
-            border-radius: 16px;
+            font-family: Arial, sans-serif;
             overflow: hidden;
         }
 
-        .viewer.active {
-            display: block;
-        }
-
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: 0;
-            background: #000;
-        }
-
-        .viewer-bar {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            z-index: 10;
-
+        body {
             display: flex;
-            gap: 8px;
+            flex-direction: column;
         }
 
-        .viewer-button {
-            border: 1px solid #444;
-            background: rgba(15, 15, 15, 0.9);
+        .topbar {
+            height: 64px;
+            min-height: 64px;
+            background: #0f0f0f;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+        }
+
+        .logo {
             color: white;
+            font-size: 20px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
 
-            border-radius: 9px;
-            padding: 8px 12px;
+        .input {
+            flex: 1;
+            height: 42px;
+            border: 1px solid #333;
+            border-radius: 22px;
+            background: #181818;
+            color: white;
+            padding: 0 18px;
+            outline: none;
+            font-size: 15px;
+        }
 
+        .input:focus {
+            border-color: #777;
+        }
+
+        .button {
+            height: 42px;
+            border: 0;
+            border-radius: 21px;
+            background: #ff0000;
+            color: white;
+            padding: 0 20px;
+            font-size: 15px;
+            font-weight: 600;
             cursor: pointer;
         }
 
-        .viewer-button:hover {
-            background: #222;
+        .button:hover {
+            background: #cc0000;
         }
 
-        .notice {
-            width: min(700px, calc(100% - 30px));
-            margin: 0 auto 30px;
+        .player {
+            position: relative;
+            flex: 1;
+            width: 100%;
+            background: #000;
+        }
 
-            color: #777;
-            font-size: 12px;
-            line-height: 1.5;
+        iframe {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .message {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #aaa;
+            font-size: 18px;
             text-align: center;
+            padding: 20px;
+            pointer-events: none;
         }
 
         @media (max-width: 600px) {
-            .apps {
-                grid-template-columns: 1fr;
+            .topbar {
+                height: 58px;
+                min-height: 58px;
+                padding: 8px;
             }
 
-            .viewer {
-                height: 70vh;
+            .logo {
+                display: none;
+            }
+
+            .input {
+                font-size: 14px;
+            }
+
+            .button {
+                padding: 0 15px;
             }
         }
     </style>
@@ -156,233 +131,131 @@
 
 <body>
 
-<header>
-    <h1>Hamza Web Hub</h1>
-    <p>Open supported websites and services in one place.</p>
-</header>
+    <div class="topbar">
+        <div class="logo">YouTube</div>
 
-<section class="apps">
-
-    <button class="app" onclick="openYouTube()">
-        <div class="app-title">YouTube</div>
-        <div class="app-description">
-            YouTube video player
-        </div>
-    </button>
-
-    <button class="app" onclick="openSpotify()">
-        <div class="app-title">Spotify</div>
-        <div class="app-description">
-            Spotify embed player
-        </div>
-    </button>
-
-    <button class="app" onclick="openWebsite('https://discord.com/app')">
-        <div class="app-title">Discord</div>
-        <div class="app-description">
-            Try opening Discord
-        </div>
-    </button>
-
-    <button class="app" onclick="openWebsite('https://www.snapchat.com/')">
-        <div class="app-title">Snapchat</div>
-        <div class="app-description">
-            Try opening Snapchat
-        </div>
-    </button>
-
-    <button class="app" onclick="openTikTok()">
-        <div class="app-title">TikTok</div>
-        <div class="app-description">
-            TikTok embed player
-        </div>
-    </button>
-
-    <button class="app" onclick="openWebsite('https://www.google.com/')">
-        <div class="app-title">Test Website</div>
-        <div class="app-description">
-            Test normal iframe compatibility
-        </div>
-    </button>
-
-</section>
-
-<div id="viewer" class="viewer">
-
-    <div class="viewer-bar">
-        <button
-            class="viewer-button"
-            onclick="openCurrentInNewTab()"
+        <input
+            id="youtubeInput"
+            class="input"
+            type="text"
+            placeholder="Paste a YouTube URL or video ID..."
+            autocomplete="off"
         >
-            ↗ Open
-        </button>
 
-        <button
-            class="viewer-button"
-            onclick="closeViewer()"
-        >
-            ✕ Close
+        <button class="button" onclick="loadVideo()">
+            Watch
         </button>
     </div>
 
-    <iframe
-        id="frame"
-        allow="
-            autoplay;
-            clipboard-write;
-            encrypted-media;
-            fullscreen;
-            picture-in-picture;
-            web-share
-        "
-        allowfullscreen
-        referrerpolicy="strict-origin-when-cross-origin"
-    ></iframe>
+    <main class="player">
+        <div id="message" class="message">
+            Paste a YouTube video URL above.
+        </div>
 
-</div>
+        <iframe
+            id="youtubeFrame"
+            title="YouTube Player"
+            allow="
+                accelerometer;
+                autoplay;
+                clipboard-write;
+                encrypted-media;
+                gyroscope;
+                picture-in-picture;
+                web-share;
+                fullscreen
+            "
+            allowfullscreen
+        ></iframe>
+    </main>
 
-<div class="notice">
-    Some websites intentionally block being displayed inside an iframe.
-    If a site does not load, use the Open button instead.
-</div>
+    <script>
+        const input = document.getElementById("youtubeInput");
+        const iframe = document.getElementById("youtubeFrame");
+        const message = document.getElementById("message");
 
-<script>
-    const viewer = document.getElementById("viewer");
-    const frame = document.getElementById("frame");
+        function getVideoId(value) {
+            value = value.trim();
 
-    let currentURL = "";
-
-    function show(url) {
-        currentURL = url;
-
-        frame.src = url;
-        viewer.classList.add("active");
-
-        viewer.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-        });
-    }
-
-    function closeViewer() {
-        frame.src = "";
-        viewer.classList.remove("active");
-        currentURL = "";
-    }
-
-    function openCurrentInNewTab() {
-        if (!currentURL) return;
-
-        window.open(
-            currentURL,
-            "_blank",
-            "noopener,noreferrer"
-        );
-    }
-
-    function openWebsite(url) {
-        show(url);
-    }
-
-    function openYouTube() {
-        const id = prompt(
-            "Enter a YouTube video ID or YouTube URL:"
-        );
-
-        if (!id) return;
-
-        let videoID = id.trim();
-
-        /*
-            Supports:
-
-            https://youtube.com/watch?v=VIDEO_ID
-            https://www.youtube.com/watch?v=VIDEO_ID
-            https://youtu.be/VIDEO_ID
-            https://youtube.com/shorts/VIDEO_ID
-            VIDEO_ID
-        */
-
-        if (videoID.includes("youtube.com/watch")) {
-            try {
-                videoID =
-                    new URL(videoID)
-                    .searchParams
-                    .get("v");
-            } catch {
-                videoID = "";
+            // Direct YouTube video ID
+            if (/^[a-zA-Z0-9_-]{11}$/.test(value)) {
+                return value;
             }
+
+            try {
+                const url = new URL(value);
+
+                // youtube.com/watch?v=VIDEO_ID
+                if (
+                    url.hostname === "youtube.com" ||
+                    url.hostname === "www.youtube.com" ||
+                    url.hostname === "m.youtube.com"
+                ) {
+                    const id = url.searchParams.get("v");
+
+                    if (id) {
+                        return id;
+                    }
+
+                    // youtube.com/embed/VIDEO_ID
+                    const embedMatch =
+                        url.pathname.match(/^\/embed\/([a-zA-Z0-9_-]{11})/);
+
+                    if (embedMatch) {
+                        return embedMatch[1];
+                    }
+
+                    // youtube.com/shorts/VIDEO_ID
+                    const shortsMatch =
+                        url.pathname.match(/^\/shorts\/([a-zA-Z0-9_-]{11})/);
+
+                    if (shortsMatch) {
+                        return shortsMatch[1];
+                    }
+                }
+
+                // youtu.be/VIDEO_ID
+                if (url.hostname === "youtu.be") {
+                    const id = url.pathname.substring(1);
+
+                    if (/^[a-zA-Z0-9_-]{11}$/.test(id)) {
+                        return id;
+                    }
+                }
+
+            } catch {
+                return null;
+            }
+
+            return null;
         }
 
-        else if (videoID.includes("youtu.be/")) {
-            videoID =
-                videoID
-                .split("youtu.be/")[1]
-                .split(/[?&]/)[0];
+        function loadVideo() {
+            const value = input.value;
+            const videoId = getVideoId(value);
+
+            if (!videoId) {
+                message.textContent =
+                    "Invalid YouTube URL or video ID.";
+                message.style.display = "flex";
+                iframe.src = "";
+                return;
+            }
+
+            iframe.src =
+                "https://www.youtube.com/embed/" +
+                videoId +
+                "?autoplay=1&rel=0";
+
+            message.style.display = "none";
         }
 
-        else if (videoID.includes("youtube.com/shorts/")) {
-            videoID =
-                videoID
-                .split("youtube.com/shorts/")[1]
-                .split(/[?&]/)[0];
-        }
-
-        if (!videoID) {
-            alert("Invalid YouTube URL.");
-            return;
-        }
-
-        show(
-            "https://www.youtube.com/embed/" +
-            videoID +
-            "?rel=0"
-        );
-    }
-
-    function openSpotify() {
-
-        /*
-            Spotify officially supports iframe embeds.
-
-            This example opens a Spotify playlist.
-            Replace the ID with your own playlist/track/album/etc.
-        */
-
-        show(
-            "https://open.spotify.com/embed/playlist/" +
-            "37i9dQZF1DXcBWIGoYBM5N"
-        );
-    }
-
-    function openTikTok() {
-
-        /*
-            TikTok's official iframe player requires
-            a TikTok POST ID.
-
-            Example video ID:
-            6718335390845095173
-        */
-
-        const id = prompt(
-            "Enter the TikTok video ID:"
-        );
-
-        if (!id) return;
-
-        if (!/^\d+$/.test(id.trim())) {
-            alert("Invalid TikTok video ID.");
-            return;
-        }
-
-        show(
-            "https://www.tiktok.com/player/v1/" +
-            id.trim() +
-            "?controls=1&description=1&music_info=1"
-        );
-    }
-</script>
+        input.addEventListener("keydown", function(event) {
+            if (event.key === "Enter") {
+                loadVideo();
+            }
+        });
+    </script>
 
 </body>
 </html>
